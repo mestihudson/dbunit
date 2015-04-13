@@ -1,0 +1,4 @@
+!sistema: 1, Cadastros, 0
+!pessoa/padrao: 
+!pessoa-sistema: 1, 1
+insert into cargo (id, nome) values (1, ''Qualquer Cargo'');

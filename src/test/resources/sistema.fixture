@@ -1,0 +1,1 @@
+insert into sistema (id, nome) values ({0}, ''{1}'');
