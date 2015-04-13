@@ -1,6 +1,7 @@
 package mestihudson.dbunit;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
@@ -10,7 +11,9 @@ import java.io.FileOutputStream;
 import java.sql.DriverManager;
 
 public class AppTest {
-  @Test public void extract_from_db() throws Throwable {
+  @Test
+  @Ignore
+  public void extract_from_db() throws Throwable {
     Class.forName("org.h2.Driver");
 
     IDatabaseConnection connection = new DatabaseConnection(DriverManager.getConnection("jdbc:h2:tcp://localhost/~/Downloads/maven/db/unit", "sa", ""));
@@ -21,5 +24,9 @@ public class AppTest {
 
     IDataSet fds = connection.createDataSet();
     FlatXmlDataSet.write(fds, new FileOutputStream("target/full-dataset.xml"));
+  }
+
+  @Test public void db_load() throws Throwable {
+    DB.load("criar-administrador-sistema", 2, "Meu Primeiro Nome");
   }
 }
