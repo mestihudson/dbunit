@@ -1,4 +1,4 @@
-!sistema: 1, Cadastros
+!sistema: 1, "Cadastros de qualquer outra coisa, independente do que seja, importa!"
 !pessoa/padrao: 
 !pessoa-sistema: 1, 1
 insert into cargo (id, nome) values (1, 'Qualquer Cargo');
