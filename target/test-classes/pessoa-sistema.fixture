@@ -1,0 +1,1 @@
+insert into pessoa_sistema (id_pessoa, id_sistema) values ({0}, {1});

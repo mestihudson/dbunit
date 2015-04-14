@@ -1,4 +1,4 @@
-package mestihudson.dbunit;
+package com.fixtube;
 
 import java.io.File;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.io.FileUtils;
 
-public class DB {
+public class Fixtube {
   public static void fixture(String name, Object... parameters) throws Throwable {
     String content = load(fix(name), parameters);
     execute(content);
@@ -18,11 +18,11 @@ public class DB {
 
   private static String load(File file, Object... parameters) throws Throwable {
     String content = FileUtils.readFileToString(file);
-    content = MessageFormat.format(content, parameters);
-    return compile(content);
+    content = compile(content, parameters);
+    return content;
   }
 
-  private static String compile(String content) throws Throwable {
+  private static String compile(String content, Object... parameters) throws Throwable {
     List<String> lines = Arrays.asList(content.split("\\n"));
     String result = "";
     String pattern = "^\\!(([\\w][\\w\\-]*)(\\/[\\w][\\w\\-]*)*)\\:(.+)$";
@@ -31,7 +31,7 @@ public class DB {
       if(matcher.find()){
         result += indirection(matcher.group(1), matcher.group(4));
       }else{
-        result += line + "\n";
+        result += MessageFormat.format(line.replaceAll("'", "''"), parameters) + "\n";
       }
     }
     return result;
@@ -58,7 +58,7 @@ public class DB {
   private static File file(String name) throws Throwable {
     File file;
     try{
-      file = new File(DB.class.getClassLoader().getResource(name).getPath());
+      file = new File(Fixtube.class.getClassLoader().getResource(name).getPath());
     }catch(Throwable t) {
       throw new Exception("Arquivo [" + name + "] não localizado.");
     }
