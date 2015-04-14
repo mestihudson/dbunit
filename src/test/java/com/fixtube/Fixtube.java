@@ -12,7 +12,10 @@ import org.apache.commons.io.FileUtils;
 
 public class Fixtube {
   public static void fixture(String name, Object... parameters) throws Throwable {
-    execute(load(fix(name), parameters));
+    File file = fix(name);
+    String content = load(file, parameters);
+    FileUtils.writeStringToFile(file, content);
+    execute(load(file, parameters));
   }
 
   private static String load(File file, Object... parameters) throws Throwable {
@@ -24,8 +27,11 @@ public class Fixtube {
     String result = "";
     String pattern = "^\\!(([\\w][\\w\\-]*)(\\/[\\w][\\w\\-]*)*)\\:(.+)$";
     for(String line : lines){
+      //System.out.println("line => " + line);
       Matcher matcher = Pattern.compile(pattern).matcher(line);
-      result += matcher.find() ? indirection(matcher.group(1), matcher.group(4)) : (MessageFormat.format(line.replaceAll("'", "''"), parameters) + "\n");
+      result += matcher.find() 
+        ? indirection(matcher.group(1), matcher.group(4)) 
+        : (MessageFormat.format(line.replaceAll("'", "''"), parameters) + "\n");
     }
     return result;
   }
