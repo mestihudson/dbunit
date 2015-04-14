@@ -31,13 +31,53 @@ public class Fixtube {
   }
 
   private static String indirection(String name, String parameters) throws Throwable {
+    List params = parse(parameters);
+    return load(fix(name), params.toArray());
+  }
+
+  private static List parse(String parameters) {
+    List params = new ArrayList();
+    String [] chars = parameters.split("");
+    String arg = "";
+    for(int i = 0, l = chars.length; i < l; i++){
+      if(chars[i].equals(",")){
+        params.add(arg);
+        arg = "";
+        continue;
+      }
+      if(chars[i].equals("\"") && ){
+
+      }
+      if(chars[i].equals("\\")){
+        if(chars[i + 1].equals("\"")){
+          arg += "\"";
+          i++;
+          continue;
+        }
+        if(chars[i + 1].equals(",")){
+          arg += ",";
+          i++;
+          continue;
+        }
+        if(chars[i + 1].equals("\\")){
+          arg += "\\";
+          i++;
+          continue;
+        }
+      }
+        
+    }
+    return params;
+  }
+
+  private static List parse1(String parameters) {
+    List params = new ArrayList();
     String pattern = "([^,]+)";
     Matcher matcher = Pattern.compile(pattern).matcher(parameters);
-    List params = new ArrayList();
     while(matcher.find()){
       params.add(matcher.group(1).trim());
     }
-    return load(fix(name), params.toArray());
+    return params;
   }
 
   private static void execute(String content) throws Throwable {
