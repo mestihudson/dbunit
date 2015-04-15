@@ -1,26 +1,73 @@
 package com.fixtube;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 public class FixtubeTest {
-  @Test public void fixture() throws Throwable {
+  @Test @Ignore public void fixture() throws Throwable {
     Fixtube.fixture("criar-administrador-sistema", "84571713304", "Hudson Leite");
   }
 
   @Test public void parse_params() throws Throwable {
-    String content = "1, \"Meu nome não é johnny, mas pode me chamar assim, se você quiser\", 35";
-    ParseParameters pp = new ParseParameters(content);
-  }
+    ParseParameters parser = new ParseParameters("1");
+    assertThat(parser.getParameters().size(), equalTo(1));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
 
-  private static List parse(String content) {
-    String pattern = "([^,]+)";
-    Matcher matcher = Pattern.compile(pattern).matcher(parameters);
-    List params = new ArrayList();
-    while(matcher.find()){
-      params.add(matcher.group(1).trim());
-    }
+    parser = new ParseParameters("1, 2");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2"));
+
+    parser = new ParseParameters("1, {2}");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("{2}"));
+
+    parser = new ParseParameters("1, \"2\"");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2"));
+
+    parser = new ParseParameters("1, 	\"2\"");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2"));
+
+    parser = new ParseParameters("1,  \"2\"    ");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2"));
+
+    parser = new ParseParameters("1, 	\"2\"         ");
+    assertThat(parser.getParameters().size(), equalTo(2));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2"));
+
+    parser = new ParseParameters("1, \"2, 3 ou 4\", 5");
+    assertThat(parser.getParameters().size(), equalTo(3));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2, 3 ou 4"));
+    assertThat(parser.getParameters().get(2).toString(), equalTo("5"));
+
+    parser = new ParseParameters("1, \"2, 3 ou 4\"      , 5");
+    assertThat(parser.getParameters().size(), equalTo(3));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2, 3 ou 4"));
+    assertThat(parser.getParameters().get(2).toString(), equalTo("5"));
+
+    parser = new ParseParameters("1, 2\\, 3 ou 4, 5");
+    assertThat(parser.getParameters().size(), equalTo(3));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("2, 3 ou 4"));
+    assertThat(parser.getParameters().get(2).toString(), equalTo("5"));
+
+    parser = new ParseParameters("1, \\\"2\\, 3 ou 4\\\", 5");
+    assertThat(parser.getParameters().size(), equalTo(3));
+    assertThat(parser.getParameters().get(0).toString(), equalTo("1"));
+    assertThat(parser.getParameters().get(1).toString(), equalTo("\"2, 3 ou 4\""));
+    assertThat(parser.getParameters().get(2).toString(), equalTo("5"));
   }
 }
